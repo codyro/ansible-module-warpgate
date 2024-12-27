@@ -95,7 +95,7 @@ ok: [localhost] => {
             "allow_roles": [],
             "id": "68b5f2c7-91f1-4b7f-967c-e3477164e0f5",
             "kind": "Ssh",
-            "name": "warpgate-vm-3.hawkinternal.com-ansible",
+            "name": "warpgate-vm-3",
             "options": {
                 "allow_insecure_algos": null,
                 "auth": {
