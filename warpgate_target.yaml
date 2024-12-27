@@ -1,0 +1,51 @@
+---
+- name: Manage Warpgate targets
+  hosts: localhost
+  connection: local
+  vars:
+      warpgate_url: "https://a-really-cool-warpgate-domain.com:9443/@warpgate/admin/api"
+      warpgate_admin_username: "admin"
+      warpgate_admin_password: "cookies"
+  tasks:
+    - name: Create SSH target (pubkey)
+      warpgate_target:
+        name: "{{ item }}-ansible"
+        url: "{{ warpgate_url }}"
+        admin_username: "{{ warpgate_admin_username }}"
+        admin_password: "{{ warpgate_admin_password }}"
+        kind: "Ssh"
+        state: absent
+        host: "{{ hostvars[item].ansible_host | default(item) }}"
+        port: 22
+        username: "{{ hostvars[item].target_username }}"
+        password: "{{ hostvars[item].target_password }}"
+        roles:
+          - "warpgate:admin"
+      loop: "{{ groups['warpgate_targets'] }}"
+
+    # Get all targets
+    - name: Get all target information
+      warpgate_target_info:
+        url: "{{ warpgate_url }}"
+        admin_username: "{{ warpgate_admin_username }}"
+        admin_password: "{{ warpgate_admin_password }}"
+      register: target_info
+
+    # Display target information
+    - name: Show target info
+      ansible.builtin.debug:
+        var: target_info.targets
+
+    # Search for target
+    - name: Search for target information
+      warpgate_target_info:
+        url: "{{ warpgate_url }}"
+        admin_username: "{{ warpgate_admin_username }}"
+        admin_password: "{{ warpgate_admin_password }}"
+        search: "warpgate-vm-3"
+      register: target_info1
+
+    - name: Show target info1
+      ansible.builtin.debug:
+        var: target_info1.targets
+...
